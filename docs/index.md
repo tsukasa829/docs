@@ -9,6 +9,9 @@
 ## ドキュメント一覧
 
 - [ホーム](index.md)
+- [憲法](constitution.md)
+- [Todo](todo.md)
+- [戦略](strategy.md)
 
 ## 最終更新
 
