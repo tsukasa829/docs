@@ -1,14 +1,11 @@
 # Todo
 
-## タスク管理
+## In Progress
 
-このページではタスクを管理します。
-
----
-
-## 進行中のタスク
-
-
+<!-- 014 created:2025-11-23 -->
+- [ ] aaaaaaaaaaaa
+<!-- 015 created:2025-11-23 -->
+- [ ] 2346
 
 ## Completed
 
@@ -30,3 +27,9 @@
 - [x] GitHub Pagesを有効化する
 <!-- 010 created:2025-11-19 due:2025-11-22 -->
 - [x] Tenetsページに行動指針を整理する
+<!-- 011 created:2025-11-23 -->
+- [x] a
+<!-- 012 created:2025-11-23 -->
+- [x] aaaaaaaaaaaaaaaaa
+<!-- 013 created:2025-11-23 -->
+- [x] a
