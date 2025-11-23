@@ -8,19 +8,10 @@
 
 ## 進行中のタスク
 
-<!-- NaN created:2025-11-23 -->
-- [ ] tesu
-<!-- NaN created:2025-11-23 -->
-- [ ] a
-<!-- NaN created:2025-11-23 -->
-- [ ] wwww
+
 
 ## Completed
 
-<!-- NaN created:2025-11-23 -->
-- [x] aaa
-<!-- NaN created:2025-11-23 -->
-- [x] wwwwww
 <!-- ID created:YYYY-MM-DD due:YYYY-MM-DD -->
 - [x] タスク内容
 <!-- 005 created:2025-11-23 due:2025-11-27 -->
