@@ -10,6 +10,7 @@
 
 - [ホーム](index.md)
 - [憲法](constitution.md)
+- [Tenets](tenets.md)
 - [Todo](todo.md)
 - [戦略](strategy.md)
 
