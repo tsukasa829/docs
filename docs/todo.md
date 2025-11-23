@@ -8,8 +8,6 @@
 
 ## 進行中のタスク
 
-<!-- 005 created:2025-11-23 due:2025-11-27 -->
-- [ ] タスク追加APIの実装とテスト
 <!-- 007 created:2025-11-19 due:2025-11-25 -->
 - [ ] Wikiのシステム構成図をドキュメント化する
 <!-- ID created:YYYY-MM-DD due:YYYY-MM-DD -->
@@ -17,6 +15,8 @@
 
 ## Completed
 
+<!-- 005 created:2025-11-23 due:2025-11-27 -->
+- [x] タスク追加APIの実装とテスト
 <!-- 003 created:2025-11-22 due:2025-11-26 -->
 - [x] GitHub Personal Access Tokenを取得して設定する
 <!-- 002 created:2025-11-21 due:2025-11-24 -->
