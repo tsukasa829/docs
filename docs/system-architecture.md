@@ -1,4 +1,4 @@
-# Wiki Task Manager - システム構成図
+# Wiki Editor System - システム構成図
 
 ## 全体アーキテクチャ
 
@@ -11,9 +11,10 @@
 │                    Chrome拡張機能 (Frontend)                     │
 ├─────────────────────────────────────────────────────────────────┤
 │  - ポップアップUI (popup.html/js)                                │
-│  - タスク入力フォーム                                             │
-│  - タスク一覧表示                                                 │
-│  - 完了チェックボックス                                           │
+│  - タスク管理 (todo.md)                                          │
+│  - メモエディタ (tenets, strategy, constitution)                │
+│  - クイック追加フォーム                                           │
+│  - ファイル選択機能                                               │
 │  - Background Service Worker                                     │
 └─────────────────────────────────────────────────────────────────┘
                               ↓ HTTPS/REST API
@@ -22,19 +23,35 @@
 ├─────────────────────────────────────────────────────────────────┤
 │  Express.js                                                      │
 │  ┌─────────────────────────────────────────────────────────┐   │
-│  │  API Endpoints                                          │   │
-│  │  - POST   /api/tasks          (タスク追加)              │   │
-│  │  - GET    /api/tasks          (タスク一覧取得)          │   │
-│  │  - PATCH  /api/tasks/:id      (タスク更新)              │   │
-│  │  - DELETE /api/tasks/:id      (タスク削除)              │   │
-│  │  - POST   /api/tasks/:id/done (完了マーク)              │   │
+│  │  API Endpoints (汎用Wiki編集API)                        │   │
+│  │                                                         │   │
+│  │  【ファイル操作】                                        │   │
+│  │  - GET    /api/files/:filename    (ファイル内容取得)    │   │
+│  │  - PUT    /api/files/:filename    (ファイル更新)        │   │
+│  │  - GET    /api/files              (ファイル一覧)        │   │
+│  │                                                         │   │
+│  │  【タスク操作 (todo.md専用)】                           │   │
+│  │  - POST   /api/tasks              (タスク追加)          │   │
+│  │  - GET    /api/tasks              (タスク一覧)          │   │
+│  │  - PATCH  /api/tasks/:id          (タスク更新)          │   │
+│  │  - DELETE /api/tasks/:id          (タスク削除)          │   │
+│  │  - POST   /api/tasks/:id/complete (完了マーク)          │   │
+│  │                                                         │   │
+│  │  【セクション操作 (汎用)】                               │   │
+│  │  - POST   /api/:file/append       (末尾に追加)          │   │
+│  │  - POST   /api/:file/section      (セクション追加)      │   │
+│  │  - PATCH  /api/:file/section/:id  (セクション更新)      │   │
+│  │                                                         │   │
+│  │  【メモ操作 (クイック追加)】                             │   │
+│  │  - POST   /api/memo               (クイックメモ)        │   │
 │  └─────────────────────────────────────────────────────────┘   │
 │                              ↓                                   │
 │  ┌─────────────────────────────────────────────────────────┐   │
 │  │  Services Layer                                         │   │
 │  │  - GitHub Service (Octokit)                             │   │
-│  │  - Markdown Parser Service                              │   │
+│  │  - Markdown Parser/Writer Service                       │   │
 │  │  - Task Manager Service                                 │   │
+│  │  - File Manager Service                                 │   │
 │  │  - Authentication Service                               │   │
 │  └─────────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────────┘
@@ -71,7 +88,7 @@
 
 ## データフロー詳細
 
-### 1. タスク追加フロー
+### 1. タスク追加フロー (todo.md)
 
 ```
 [ユーザー] 
@@ -81,39 +98,230 @@
 [POST /api/tasks]
     ↓
 [Node.js Backend]
-    ├→ GitHub API: GET todo.md (現在のファイル取得)
-    ├→ Markdown Parser: todo.mdを解析
-    ├→ Task Manager: 新タスクを追加
-    ├→ Markdown Generator: 新しいMarkdownを生成
-    └→ GitHub API: PUT todo.md (更新 + commit)
+    ├→ GitHub API: GET todo.md
+    ├→ Markdown Parser: 解析
+    ├→ Task Manager: 新タスク追加
+    └→ GitHub API: PUT todo.md (commit: "Add task: 新タスク")
         ↓
-[GitHub Repository]
-    └→ todo.md更新 (commit: "Add task: 新タスク")
-        ↓
-[GitHub Pages]
-    └→ 自動ビルド (2-3分後に反映)
-        ↓
-[Chrome拡張]
-    └→ 成功通知表示
+[GitHub Repository] → [GitHub Pages]
 ```
 
-### 2. タスク完了フロー
+### 2. メモ追加フロー (tenets.md等)
 
 ```
 [ユーザー]
-    ↓ チェックボックスクリック
+    ↓ ファイル選択 + 内容入力
 [Chrome拡張 UI]
-    ↓ { taskId: "task-123", completed: true }
-[POST /api/tasks/task-123/done]
+    ↓ { file: "tenets", content: "新しい原則", section: "行動指針" }
+[POST /api/tenets/append]
     ↓
 [Node.js Backend]
-    ├→ GitHub API: GET todo.md
-    ├→ Markdown Parser: taskId特定
-    ├→ Task Manager: [ ] → [x] に変更
-    └→ GitHub API: PUT todo.md
+    ├→ GitHub API: GET tenets.md
+    ├→ Markdown Parser: 指定セクション特定
+    ├→ File Manager: コンテンツ追加
+    └→ GitHub API: PUT tenets.md (commit: "Add to tenets: 新しい原則")
         ↓
-[GitHub Repository]
-    └→ todo.md更新 (commit: "Complete task: task-123")
+[GitHub Repository] → [GitHub Pages]
+```
+
+### 3. ファイル全体更新フロー
+
+```
+[ユーザー]
+    ↓ ファイル編集
+[Chrome拡張 UI]
+    ↓ { file: "strategy.md", content: "更新後の全内容" }
+[PUT /api/files/strategy.md]
+    ↓
+[Node.js Backend]
+    ├→ GitHub API: GET strategy.md (SHA取得)
+    └→ GitHub API: PUT strategy.md (commit: "Update strategy.md")
+        ↓
+[GitHub Repository] → [GitHub Pages]
+```
+
+### 4. クイックメモフロー
+
+```
+[ユーザー]
+    ↓ 拡張アイコンクリック → メモ入力
+[Chrome拡張 UI]
+    ↓ { memo: "思いついたアイデア", target: "todo" }
+[POST /api/memo]
+    ↓
+[Node.js Backend]
+    ├→ 対象ファイル決定 (デフォルト: todo.md)
+    ├→ タイムスタンプ付与
+    └→ GitHub API: PUT (commit: "Quick memo: 思いついた...")
+        ↓
+[GitHub Repository] → [GitHub Pages]
+```
+
+---
+
+## API仕様詳細
+
+### ファイル操作API
+
+#### GET /api/files/:filename
+**用途:** ファイル内容の取得
+```json
+// Request
+GET /api/files/tenets.md
+
+// Response
+{
+  "filename": "tenets.md",
+  "content": "# Tenets\n\n...",
+  "sha": "abc123...",
+  "lastModified": "2025-11-23T12:00:00Z"
+}
+```
+
+#### PUT /api/files/:filename
+**用途:** ファイル全体の更新
+```json
+// Request
+PUT /api/files/strategy.md
+{
+  "content": "更新後の全内容",
+  "message": "Update strategy" // optional
+}
+
+// Response
+{
+  "success": true,
+  "commit": "def456...",
+  "url": "https://github.com/tsukasa829/docs/commit/def456"
+}
+```
+
+#### GET /api/files
+**用途:** 編集可能なファイル一覧
+```json
+// Response
+{
+  "files": [
+    { "name": "todo.md", "type": "task" },
+    { "name": "tenets.md", "type": "document" },
+    { "name": "strategy.md", "type": "document" },
+    { "name": "constitution.md", "type": "document" }
+  ]
+}
+```
+
+---
+
+### タスク操作API (todo.md専用)
+
+#### POST /api/tasks
+**用途:** タスク追加
+```json
+// Request
+{
+  "title": "新しいタスク",
+  "priority": "high",  // optional: low/medium/high
+  "due": "2025-11-25", // optional
+  "tags": ["work"]     // optional
+}
+
+// Response
+{
+  "success": true,
+  "taskId": "task-1234",
+  "commit": "abc123..."
+}
+```
+
+#### GET /api/tasks
+**用途:** タスク一覧取得
+```json
+// Response
+{
+  "tasks": [
+    {
+      "id": "task-1234",
+      "title": "新しいタスク",
+      "completed": false,
+      "priority": "high",
+      "due": "2025-11-25",
+      "tags": ["work"]
+    }
+  ]
+}
+```
+
+#### PATCH /api/tasks/:id
+**用途:** タスク更新
+```json
+// Request
+PATCH /api/tasks/task-1234
+{
+  "title": "更新されたタスク",  // optional
+  "priority": "medium"         // optional
+}
+```
+
+#### POST /api/tasks/:id/complete
+**用途:** タスク完了マーク
+```json
+// Request
+POST /api/tasks/task-1234/complete
+
+// Response
+{
+  "success": true,
+  "taskId": "task-1234",
+  "completed": true
+}
+```
+
+---
+
+### セクション操作API (汎用)
+
+#### POST /api/:file/append
+**用途:** ファイル末尾に追加
+```json
+// Request
+POST /api/tenets/append
+{
+  "content": "新しい行動指針",
+  "heading": "### 4. 新原則" // optional
+}
+```
+
+#### POST /api/:file/section
+**用途:** 特定セクションに追加
+```json
+// Request
+POST /api/tenets/section
+{
+  "sectionTitle": "行動指針",
+  "content": "- 新しい項目"
+}
+```
+
+---
+
+### クイックメモAPI
+
+#### POST /api/memo
+**用途:** 素早くメモを追加
+```json
+// Request
+{
+  "content": "思いついたアイデア",
+  "target": "todo",      // todo/tenets/strategy/constitution
+  "timestamp": true      // タイムスタンプ付与
+}
+
+// Response
+{
+  "success": true,
+  "addedTo": "todo.md",
+  "commit": "xyz789..."
+}
 ```
 
 ---
@@ -127,13 +335,15 @@
     "version": 3,
     "permissions": [
       "storage",
-      "activeTab"
+      "activeTab",
+      "contextMenus"  // 右クリックメニュー
     ]
   },
   "技術": [
     "Vanilla JS / React",
     "Chrome Storage API",
-    "Fetch API"
+    "Fetch API",
+    "Context Menus API"
   ]
 }
 ```
@@ -190,16 +400,23 @@
 │   ├── .gitignore
 │   ├── server.js              # エントリーポイント
 │   ├── /routes
-│   │   └── tasks.js           # タスクAPI
+│   │   ├── tasks.js           # タスクAPI
+│   │   ├── files.js           # ファイル操作API
+│   │   ├── memo.js            # クイックメモAPI
+│   │   └── sections.js        # セクション操作API
 │   ├── /services
 │   │   ├── github.js          # GitHub API連携
-│   │   ├── parser.js          # Markdown解析
-│   │   └── taskManager.js     # タスク管理ロジック
+│   │   ├── markdown.js        # Markdown解析・生成
+│   │   ├── taskManager.js     # タスク管理ロジック
+│   │   ├── fileManager.js     # ファイル管理ロジック
+│   │   └── sectionManager.js  # セクション管理ロジック
 │   ├── /middleware
 │   │   ├── auth.js            # API認証
+│   │   ├── validator.js       # リクエスト検証
 │   │   └── errorHandler.js    # エラーハンドリング
 │   └── /utils
-│       └── logger.js          # ログ
+│       ├── logger.js          # ログ
+│       └── helpers.js         # ヘルパー関数
 │
 └── /docs                      # 既存のWikiリポジトリ
     └── (変更なし)
