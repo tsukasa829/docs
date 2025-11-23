@@ -1,9 +1,13 @@
 # Todo
 
-## In Progress
+## タスク管理
 
-<!-- 003 created:2025-11-22 due:2025-11-26 -->
-- [ ] GitHub Personal Access Tokenを取得して設定する
+このページではタスクを管理します。
+
+---
+
+## 進行中のタスク
+
 <!-- 005 created:2025-11-23 due:2025-11-27 -->
 - [ ] タスク追加APIの実装とテスト
 <!-- 006 created:2025-11-23 due:2025-11-28 -->
@@ -15,6 +19,8 @@
 
 ## Completed
 
+<!-- 003 created:2025-11-22 due:2025-11-26 -->
+- [x] GitHub Personal Access Tokenを取得して設定する
 <!-- 002 created:2025-11-21 due:2025-11-24 -->
 - [x] Chrome拡張のReact環境をセットアップする
 <!-- 004 created:2025-11-22 due:2025-11-30 -->
