@@ -13,6 +13,7 @@
 - [Tenets](tenets.md)
 - [Todo](todo.md)
 - [戦略](strategy.md)
+- [システム構成図](system-architecture.md)
 
 ## 最終更新
 
