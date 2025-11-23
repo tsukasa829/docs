@@ -17,7 +17,7 @@
 <!-- /TASK:003 -->
 
 <!-- TASK:004 created:2025-11-22 due:2025-11-30 -->
-- [ ] Tailwind CSSでポップアップUIをデザインする
+- [x] Tailwind CSSでポップアップUIをデザインする
 <!-- /TASK:004 -->
 
 <!-- TASK:005 created:2025-11-23 due:2025-11-27 -->
