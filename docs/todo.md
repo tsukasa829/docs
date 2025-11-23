@@ -10,11 +10,11 @@
 
 <!-- 007 created:2025-11-19 due:2025-11-25 -->
 - [ ] Wikiのシステム構成図をドキュメント化する
-<!-- ID created:YYYY-MM-DD due:YYYY-MM-DD -->
-- [ ] タスク内容
 
 ## Completed
 
+<!-- ID created:YYYY-MM-DD due:YYYY-MM-DD -->
+- [x] タスク内容
 <!-- 005 created:2025-11-23 due:2025-11-27 -->
 - [x] タスク追加APIの実装とテスト
 <!-- 003 created:2025-11-22 due:2025-11-26 -->
