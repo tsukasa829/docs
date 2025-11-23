@@ -1,0 +1,6 @@
+theme: jekyll-theme-minimal
+title: Wiki Documentation
+description: プロジェクトドキュメント管理
+
+# GitHub Pages設定
+markdown: kramdown
