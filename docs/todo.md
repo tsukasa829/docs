@@ -10,8 +10,6 @@
 
 <!-- 005 created:2025-11-23 due:2025-11-27 -->
 - [ ] タスク追加APIの実装とテスト
-<!-- 006 created:2025-11-23 due:2025-11-28 -->
-- [ ] Chrome Storageでローカルキャッシュを実装する
 <!-- 007 created:2025-11-19 due:2025-11-25 -->
 - [ ] Wikiのシステム構成図をドキュメント化する
 <!-- ID created:YYYY-MM-DD due:YYYY-MM-DD -->
